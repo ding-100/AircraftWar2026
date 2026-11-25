@@ -25,6 +25,7 @@ final class BaseGame extends SurfaceView implements SurfaceHolder.Callback, Runn
     private final GameSession session;
     private final GameRenderer renderer;
     private final int borderColor;
+    private final Object screenStateLock = new Object();
 
     private volatile Viewport viewport = new Viewport(1f, 0f, 0f);
     private volatile boolean isRunning;
@@ -44,11 +45,14 @@ final class BaseGame extends SurfaceView implements SurfaceHolder.Callback, Runn
     }
 
     void setScreenActive(boolean isActive) {
-        isScreenActive = isActive;
+        synchronized (screenStateLock) {
+            isScreenActive = isActive;
+            if (isActive) {
+                screenStateLock.notifyAll();
+            }
+        }
         if (isActive) {
             startLoopIfReady();
-        } else {
-            stopLoop();
         }
     }
 
@@ -70,6 +74,7 @@ final class BaseGame extends SurfaceView implements SurfaceHolder.Callback, Runn
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         isSurfaceReady = false;
+        // Wait until the drawing thread releases the Canvas before Android destroys the surface.
         stopLoop();
     }
 
@@ -102,9 +107,22 @@ final class BaseGame extends SurfaceView implements SurfaceHolder.Callback, Runn
         }
     }
 
+    private boolean awaitActiveScreen() {
+        synchronized (screenStateLock) {
+            while (isRunning && !isScreenActive) {
+                try {
+                    screenStateLock.wait();
+                } catch (InterruptedException exception) {
+                    return false;
+                }
+            }
+            return isRunning;
+        }
+    }
+
     @Override
     public void run() {
-        while (isRunning) {
+        while (awaitActiveScreen()) {
             long startedAt = SystemClock.uptimeMillis();
             TouchPosition currentTarget = target;
             if (currentTarget != null && !session.isGameOver()) {
