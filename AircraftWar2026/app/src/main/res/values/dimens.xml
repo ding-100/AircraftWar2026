@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="space_8">8dp</dimen>
+    <dimen name="space_12">12dp</dimen>
+    <dimen name="space_16">16dp</dimen>
+    <dimen name="space_24">24dp</dimen>
+    <dimen name="radius_8">8dp</dimen>
+    <dimen name="radius_16">16dp</dimen>
+    <dimen name="touch_target">48dp</dimen>
+    <dimen name="menu_art_height">180dp</dimen>
+    <dimen name="menu_hero_size">100dp</dimen>
+</resources>

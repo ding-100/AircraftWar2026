@@ -21,4 +21,13 @@ public enum Difficulty {
         this.bossSpeed = bossSpeed;
         this.bossHp = bossHp;
     }
+
+    public static Difficulty fromName(String name) {
+        for (Difficulty difficulty : values()) {
+            if (difficulty.name().equals(name)) {
+                return difficulty;
+            }
+        }
+        return EASY;
+    }
 }

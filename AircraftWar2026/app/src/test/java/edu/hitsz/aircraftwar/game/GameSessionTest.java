@@ -5,6 +5,7 @@ import edu.hitsz.aircraftwar.game.bullet.HeroBullet;
 
 import org.junit.Test;
 
+import java.util.EnumSet;
 import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
@@ -25,10 +26,12 @@ public final class GameSessionTest {
     @Test
     public void oneBulletDestroysOneMobAndAddsTenPoints() {
         GameSession session = centeredMobs();
+        EnumSet<GameEvent> events = EnumSet.noneOf(GameEvent.class);
         for (int tick = 0; tick < 120 && session.getScore() == 0; tick++) {
-            session.update();
+            events = session.update();
         }
 
+        assertTrue(events.contains(GameEvent.BULLET_HIT));
         assertEquals(10, session.getScore());
         assertEquals(100, session.getHero().getHp());
     }
@@ -40,10 +43,14 @@ public final class GameSessionTest {
             session.update();
         }
         session.moveHero(256, 60);
+        int gameOverEvents = 0;
         for (int tick = 50; tick < 59; tick++) {
-            session.update();
+            if (session.update().contains(GameEvent.GAME_OVER)) {
+                gameOverEvents++;
+            }
         }
 
+        assertEquals(1, gameOverEvents);
         assertTrue(session.isGameOver());
         assertEquals(0, session.getScore());
     }
@@ -83,8 +90,26 @@ public final class GameSessionTest {
         assertFalse(second.isShieldActive());
     }
 
+    @Test
+    public void normalModeReportsBossArrivalAfterThreeHundredPoints() {
+        GameSession session = centeredMobs(Difficulty.NORMAL);
+        int bossArrivals = 0;
+        for (int tick = 0; tick < 2400 && !session.isGameOver(); tick++) {
+            if (session.update().contains(GameEvent.BOSS_ENTERED)) {
+                bossArrivals++;
+                assertTrue(session.getScore() >= 300);
+                break;
+            }
+        }
+        assertEquals(1, bossArrivals);
+    }
+
     private GameSession centeredMobs() {
-        return new GameSession(Difficulty.EASY, new Random() {
+        return centeredMobs(Difficulty.EASY);
+    }
+
+    private GameSession centeredMobs(Difficulty difficulty) {
+        return new GameSession(difficulty, new Random() {
             @Override
             public int nextInt(int bound) {
                 return bound == 4 || bound == 39 ? 0 : bound / 2;

@@ -6,4 +6,31 @@
         <item name="android:statusBarColor">@color/window_background</item>
         <item name="android:navigationBarColor">@color/window_background</item>
     </style>
+    <style name="Widget.AircraftWar.ScreenTitle" parent="@android:style/Widget.Material.TextView">
+        <item name="android:fontFamily">sans-serif-black</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">36sp</item>
+    </style>
+
+    <style name="Widget.AircraftWar.SectionTitle" parent="@android:style/Widget.Material.TextView">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="Widget.AircraftWar.PrimaryButton" parent="@android:style/Widget.Material.Button">
+        <item name="android:background">@drawable/button_primary</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:minHeight">@dimen/touch_target</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:paddingHorizontal">@dimen/space_12</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/text_on_accent</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="Widget.AircraftWar.SecondaryButton" parent="Widget.AircraftWar.PrimaryButton">
+        <item name="android:background">@drawable/button_secondary</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
 </resources>

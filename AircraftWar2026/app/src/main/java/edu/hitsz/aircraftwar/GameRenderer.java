@@ -24,7 +24,6 @@ final class GameRenderer {
     private final int panelColor;
     private final String scoreLabel;
     private final String lifeLabel;
-    private final String gameOverLabel;
 
     GameRenderer(Context context, Difficulty difficulty) {
         images = new GameImages(context.getResources(), difficulty);
@@ -32,7 +31,6 @@ final class GameRenderer {
         panelColor = context.getColor(R.color.game_panel);
         scoreLabel = context.getString(R.string.game_score);
         lifeLabel = context.getString(R.string.game_life);
-        gameOverLabel = context.getString(R.string.game_over);
         uiPaint.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
     }
 
@@ -77,13 +75,5 @@ final class GameRenderer {
         canvas.drawText(scoreLabel + session.getScore(), 26, 46, uiPaint);
         uiPaint.setTextAlign(Paint.Align.RIGHT);
         canvas.drawText(lifeLabel + session.getHero().getHp(), FIELD_WIDTH - 26, 46, uiPaint);
-        if (session.isGameOver()) {
-            uiPaint.setColor(panelColor);
-            canvas.drawRect(0, 0, FIELD_WIDTH, FIELD_HEIGHT, uiPaint);
-            uiPaint.setColor(textColor);
-            uiPaint.setTextAlign(Paint.Align.CENTER);
-            uiPaint.setTextSize(36);
-            canvas.drawText(gameOverLabel, FIELD_WIDTH / 2f, FIELD_HEIGHT / 2f, uiPaint);
-        }
     }
 }

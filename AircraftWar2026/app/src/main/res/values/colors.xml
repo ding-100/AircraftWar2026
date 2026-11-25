@@ -4,4 +4,9 @@
     <color name="accent">#77DEC9</color>
     <color name="game_text">#F2FBFF</color>
     <color name="game_panel">#D9101923</color>
+    <color name="panel">#1C2B39</color>
+    <color name="text_primary">#F2FBFF</color>
+    <color name="text_on_accent">#102523</color>
+    <color name="primary_ripple">#33203D3B</color>
+    <color name="secondary_ripple">#3377DEC9</color>
 </resources>

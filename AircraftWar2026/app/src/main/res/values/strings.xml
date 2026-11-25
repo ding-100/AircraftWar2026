@@ -5,4 +5,14 @@
     <string name="game_score">分数　</string>
     <string name="game_life">生命　</string>
     <string name="game_over">游戏结束</string>
+    <string name="menu_title">飞机大战</string>
+    <string name="select_difficulty">选择难度</string>
+    <string name="difficulty_easy">简单</string>
+    <string name="difficulty_normal">普通</string>
+    <string name="difficulty_hard">困难</string>
+    <string name="music_switch">音乐与音效</string>
+    <string name="back">返回</string>
+    <string name="final_score">本局得分 %1$d</string>
+    <string name="play_again">再玩一局</string>
+    <string name="return_to_menu">回主菜单</string>
 </resources>

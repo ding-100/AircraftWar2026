@@ -7,6 +7,7 @@ import edu.hitsz.aircraftwar.game.bullet.BaseBullet;
 import edu.hitsz.aircraftwar.game.bullet.EnemyBullet;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 
@@ -50,10 +51,12 @@ public final class GameSession {
         hero.moveTo(x, y);
     }
 
-    public void update() {
+    public EnumSet<GameEvent> update() {
+        EnumSet<GameEvent> events = EnumSet.noneOf(GameEvent.class);
         if (isGameOver()) {
-            return;
+            return events;
         }
+        boolean wasBossActive = boss != null;
         ticks++;
         int level = difficulty == Difficulty.EASY ? 0 : ticks / DIFFICULTY_TICKS;
         backgroundOffset = (backgroundOffset + 1) % AbstractFlyingObject.FIELD_HEIGHT;
@@ -67,13 +70,19 @@ public final class GameSession {
         heroBullets.forEach(AbstractFlyingObject::forward);
         enemyBullets.forEach(AbstractFlyingObject::forward);
         supplies.forEach(AbstractFlyingObject::forward);
-        resolveEnemyBullets();
-        resolveHeroBullets();
+        resolveEnemyBullets(events);
+        resolveHeroBullets(events);
         resolveEnemyCollisions();
-        if (!isGameOver()) {
-            collectSupplies();
+        if (isGameOver()) {
+            events.add(GameEvent.GAME_OVER);
+        } else {
+            collectSupplies(events);
         }
         removeInactiveObjects();
+        if (wasBossActive != (boss != null)) {
+            events.add(boss == null ? GameEvent.BOSS_LEFT : GameEvent.BOSS_ENTERED);
+        }
+        return events;
     }
 
     private void spawnEnemies(int level) {
@@ -115,18 +124,19 @@ public final class GameSession {
         }
     }
 
-    private void resolveEnemyBullets() {
+    private void resolveEnemyBullets(EnumSet<GameEvent> events) {
         for (BaseBullet bullet : enemyBullets) {
             if (!bullet.notValid() && hero.crash(bullet)) {
                 bullet.vanish();
                 if (!isShieldActive()) {
                     hero.decreaseHp(bullet.getPower());
+                    events.add(GameEvent.BULLET_HIT);
                 }
             }
         }
     }
 
-    private void resolveHeroBullets() {
+    private void resolveHeroBullets(EnumSet<GameEvent> events) {
         for (BaseBullet bullet : heroBullets) {
             if (bullet.notValid()) {
                 continue;
@@ -135,6 +145,7 @@ public final class GameSession {
                 if (!enemy.notValid() && enemy.crash(bullet)) {
                     bullet.vanish();
                     enemy.decreaseHp(bullet.getPower());
+                    events.add(GameEvent.BULLET_HIT);
                     if (enemy.notValid()) {
                         score += enemy.getPoints();
                         dropSupplies(enemy);
@@ -165,7 +176,7 @@ public final class GameSession {
         }
     }
 
-    private void collectSupplies() {
+    private void collectSupplies(EnumSet<GameEvent> events) {
         for (Supply supply : supplies) {
             if (supply.notValid() || !hero.crash(supply)) {
                 continue;
@@ -188,6 +199,8 @@ public final class GameSession {
                 }
                 default -> throw new IllegalStateException("Unexpected supply: " + supply.getSprite());
             }
+            events.add(supply.getSprite() == Sprite.BOMB
+                    ? GameEvent.BOMB_EXPLODED : GameEvent.SUPPLY_COLLECTED);
             supply.vanish();
         }
     }

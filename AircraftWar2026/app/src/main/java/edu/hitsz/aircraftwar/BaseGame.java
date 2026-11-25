@@ -2,19 +2,26 @@ package edu.hitsz.aircraftwar;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import edu.hitsz.aircraftwar.game.Difficulty;
+import edu.hitsz.aircraftwar.game.GameEvent;
 import edu.hitsz.aircraftwar.game.GameSession;
+
+import java.util.EnumSet;
 
 import static edu.hitsz.aircraftwar.game.AbstractFlyingObject.FIELD_HEIGHT;
 import static edu.hitsz.aircraftwar.game.AbstractFlyingObject.FIELD_WIDTH;
 import static edu.hitsz.aircraftwar.game.AbstractFlyingObject.STEP_MILLIS;
 
 final class BaseGame extends SurfaceView implements SurfaceHolder.Callback, Runnable {
+    static final int FRAME_EVENTS = 1;
+
+    private final Handler screenHandler;
     private final GameSession session;
     private final GameRenderer renderer;
     private final int borderColor;
@@ -26,8 +33,9 @@ final class BaseGame extends SurfaceView implements SurfaceHolder.Callback, Runn
     private Thread gameThread;
     private volatile TouchPosition target;
 
-    BaseGame(Context context, Difficulty difficulty) {
+    BaseGame(Context context, Difficulty difficulty, Handler screenHandler) {
         super(context);
+        this.screenHandler = screenHandler;
         session = new GameSession(difficulty);
         renderer = new GameRenderer(context, difficulty);
         setContentDescription(context.getString(R.string.game_controls));
@@ -102,8 +110,12 @@ final class BaseGame extends SurfaceView implements SurfaceHolder.Callback, Runn
             if (currentTarget != null && !session.isGameOver()) {
                 session.moveHero(currentTarget.x(), currentTarget.y());
             }
-            session.update();
+            EnumSet<GameEvent> events = session.update();
             drawFrame();
+            if (!events.isEmpty()) {
+                FrameEvents frame = new FrameEvents(events, session.getScore());
+                screenHandler.obtainMessage(FRAME_EVENTS, frame).sendToTarget();
+            }
             if (session.isGameOver()) {
                 return;
             }
@@ -158,6 +170,9 @@ final class BaseGame extends SurfaceView implements SurfaceHolder.Callback, Runn
     public boolean performClick() {
         super.performClick();
         return true;
+    }
+
+    record FrameEvents(EnumSet<GameEvent> events, int score) {
     }
 
     private record TouchPosition(int x, int y) {
