@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/space_24"
+        android:paddingTop="@dimen/space_8">
+
+        <TextView
+            android:id="@+id/entry_final_score"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/space_8"
+            android:textColor="@color/text_secondary"
+            android:textSize="16sp"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/entry_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="name"
+            android:hint="@string/rank_player"
+            android:inputType="textPersonName|textCapWords"
+            android:minHeight="@dimen/touch_target"
+            android:singleLine="true" />
+
+        <EditText
+            android:id="@+id/entry_score"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/rank_score"
+            android:importantForAutofill="no"
+            android:inputType="number"
+            android:minHeight="@dimen/touch_target"
+            android:singleLine="true" />
+    </LinearLayout>
+</ScrollView>

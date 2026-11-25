@@ -12,6 +12,7 @@ public final class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ScreenInsets.applyTo(findViewById(R.id.menu_root));
+        findViewById(R.id.menu_art).setClipToOutline(true);
 
         Switch music = findViewById(R.id.music_switch);
         music.setChecked(MusicSettings.isEnabled(this));
@@ -21,6 +22,8 @@ public final class MainActivity extends Activity {
         findViewById(R.id.play_easy).setOnClickListener(view -> launch(Difficulty.EASY));
         findViewById(R.id.play_normal).setOnClickListener(view -> launch(Difficulty.NORMAL));
         findViewById(R.id.play_hard).setOnClickListener(view -> launch(Difficulty.HARD));
+        findViewById(R.id.show_ranking).setOnClickListener(view ->
+                startActivity(RankActivity.createIntent(this, Difficulty.EASY)));
     }
 
     private void launch(Difficulty difficulty) {

@@ -15,4 +15,22 @@
     <string name="final_score">本局得分 %1$d</string>
     <string name="play_again">再玩一局</string>
     <string name="return_to_menu">回主菜单</string>
+    <string name="rank_title">本地排行榜</string>
+    <string name="rank_position">排名</string>
+    <string name="rank_player">玩家姓名</string>
+    <string name="rank_score">分数</string>
+    <string name="rank_loading">正在读取成绩</string>
+    <string name="rank_empty">这个难度还没有记录</string>
+    <string name="rank_load_failed">成绩读取失败，点击重试</string>
+    <string name="rank_write_failed">无法更新成绩，请重试</string>
+    <string name="add_rank">添加记录</string>
+    <string name="save_round">记录成绩</string>
+    <string name="save">保存</string>
+    <string name="delete">删除</string>
+    <string name="cancel">取消</string>
+    <string name="delete_rank">删除记录</string>
+    <string name="delete_rank_prompt">确定删除「%1$s」的这条成绩？</string>
+    <string name="delete_rank_accessible">删除「%1$s」的成绩</string>
+    <string name="enter_player_name">请输入玩家姓名</string>
+    <string name="enter_valid_score">请输入有效的非负整数分数</string>
 </resources>

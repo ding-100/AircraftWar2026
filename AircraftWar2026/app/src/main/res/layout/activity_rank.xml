@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rank_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/space_16">
+
+    <Button
+        android:id="@+id/rank_back"
+        style="@style/Widget.AircraftWar.SecondaryButton"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/touch_target"
+        android:layout_marginTop="@dimen/space_8"
+        android:text="@string/back" />
+
+    <TextView
+        style="@style/Widget.AircraftWar.ScreenTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_12"
+        android:accessibilityHeading="true"
+        android:text="@string/rank_title" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_16"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/rank_easy"
+            style="@style/Widget.AircraftWar.RankTab"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/difficulty_easy" />
+
+        <Button
+            android:id="@+id/rank_normal"
+            style="@style/Widget.AircraftWar.RankTab"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_8"
+            android:layout_weight="1"
+            android:text="@string/difficulty_normal" />
+
+        <Button
+            android:id="@+id/rank_hard"
+            style="@style/Widget.AircraftWar.RankTab"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_8"
+            android:layout_weight="1"
+            android:text="@string/difficulty_hard" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_16"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/space_12">
+
+        <TextView
+            style="@style/Widget.AircraftWar.RankColumn"
+            android:layout_width="@dimen/rank_position_width"
+            android:layout_height="wrap_content"
+            android:text="@string/rank_position" />
+
+        <TextView
+            style="@style/Widget.AircraftWar.RankColumn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/rank_player" />
+
+        <TextView
+            style="@style/Widget.AircraftWar.RankColumn"
+            android:layout_width="@dimen/rank_score_width"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:text="@string/rank_score" />
+
+        <Space
+            android:layout_width="@dimen/rank_action_column_width"
+            android:layout_height="1dp" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/space_8"
+        android:layout_weight="1">
+
+        <ListView
+            android:id="@+id/rank_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="@dimen/space_8"
+            android:listSelector="@android:color/transparent"
+            android:paddingBottom="@dimen/space_8" />
+
+        <TextView
+            android:id="@+id/rank_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:accessibilityLiveRegion="polite"
+            android:gravity="center"
+            android:minHeight="@dimen/touch_target"
+            android:padding="@dimen/space_12"
+            android:text="@string/rank_loading"
+            android:textColor="@color/text_secondary"
+            android:textSize="16sp" />
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/rank_add"
+        style="@style/Widget.AircraftWar.PrimaryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_8"
+        android:layout_marginBottom="@dimen/space_16"
+        android:text="@string/add_rank" />
+</LinearLayout>

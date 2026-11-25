@@ -15,9 +15,12 @@ import edu.hitsz.aircraftwar.game.Difficulty;
 import edu.hitsz.aircraftwar.game.GameEvent;
 import edu.hitsz.aircraftwar.music.GameAudio;
 
+import java.util.UUID;
+
 public final class GameActivity extends Activity {
     private static final String EXTRA_DIFFICULTY = "difficulty";
     private static final String EXTRA_SOUND_ENABLED = "sound_enabled";
+    private static final String STATE_ROUND = "round_id";
     private static final String STATE_SCORE = "score";
     private static final int IN_PROGRESS = -1;
 
@@ -26,6 +29,7 @@ public final class GameActivity extends Activity {
     private BaseGame game;
     private GameAudio audio;
     private Difficulty difficulty;
+    private String roundId;
     private int finalScore = IN_PROGRESS;
     private boolean isResumed;
     private AlertDialog resultDialog;
@@ -45,6 +49,7 @@ public final class GameActivity extends Activity {
         difficulty = Difficulty.fromName(getIntent().getStringExtra(EXTRA_DIFFICULTY));
         if (savedInstanceState != null) {
             finalScore = savedInstanceState.getInt(STATE_SCORE, IN_PROGRESS);
+            roundId = savedInstanceState.getString(STATE_ROUND);
         }
         TextView title = findViewById(R.id.game_difficulty);
         title.setText(DifficultyLabels.nameOf(difficulty));
@@ -60,6 +65,7 @@ public final class GameActivity extends Activity {
 
     private void startRound() {
         finalScore = IN_PROGRESS;
+        roundId = UUID.randomUUID().toString();
         gameContainer.removeAllViews();
         game = new BaseGame(this, difficulty, gameHandler);
         gameContainer.addView(game);
@@ -98,6 +104,7 @@ public final class GameActivity extends Activity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(STATE_SCORE, finalScore);
+        outState.putString(STATE_ROUND, roundId);
         super.onSaveInstanceState(outState);
     }
 
@@ -132,7 +139,11 @@ public final class GameActivity extends Activity {
         resultDialog = new AlertDialog.Builder(this)
                 .setTitle(R.string.game_over)
                 .setMessage(getString(R.string.final_score, finalScore))
-                .setPositiveButton(R.string.play_again, (dialog, button) -> startRound())
+                .setPositiveButton(R.string.save_round, (dialog, button) -> {
+                    startActivity(RankActivity.createResultIntent(this, difficulty, finalScore, roundId));
+                    finish();
+                })
+                .setNeutralButton(R.string.play_again, (dialog, button) -> startRound())
                 .setNegativeButton(R.string.return_to_menu, (dialog, button) -> finish())
                 .setCancelable(false)
                 .create();

@@ -9,4 +9,9 @@
     <dimen name="touch_target">48dp</dimen>
     <dimen name="menu_art_height">180dp</dimen>
     <dimen name="menu_hero_size">100dp</dimen>
+    <dimen name="rank_row_height">64dp</dimen>
+    <dimen name="rank_position_width">44dp</dimen>
+    <dimen name="rank_score_width">84dp</dimen>
+    <dimen name="rank_delete_width">52dp</dimen>
+    <dimen name="rank_action_column_width">60dp</dimen>
 </resources>

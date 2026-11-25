@@ -9,4 +9,9 @@
     <color name="text_on_accent">#102523</color>
     <color name="primary_ripple">#33203D3B</color>
     <color name="secondary_ripple">#3377DEC9</color>
+    <color name="text_secondary">#ACBCCB</color>
+    <color name="leader">#FFD588</color>
+    <color name="leader_panel">#332D26</color>
+    <color name="leader_outline">#80704D</color>
+    <color name="delete_text">#FFADA9</color>
 </resources>

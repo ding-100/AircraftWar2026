@@ -3,7 +3,6 @@
     android:id="@+id/menu_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/window_background"
     android:fillViewport="true">
 
     <LinearLayout
@@ -21,14 +20,15 @@
             android:text="@string/menu_title" />
 
         <FrameLayout
+            android:id="@+id/menu_art"
             android:layout_width="match_parent"
             android:layout_height="@dimen/menu_art_height"
             android:layout_marginTop="@dimen/space_16"
             android:background="@drawable/panel"
-            android:clipToOutline="true"
             android:importantForAccessibility="noHideDescendants">
 
             <ImageView
+                android:contentDescription="@null"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:alpha="0.72"
@@ -36,6 +36,7 @@
                 android:src="@drawable/background_normal" />
 
             <ImageView
+                android:contentDescription="@null"
                 android:layout_width="@dimen/menu_hero_size"
                 android:layout_height="@dimen/menu_hero_size"
                 android:layout_gravity="center"
@@ -102,5 +103,12 @@
             android:text="@string/music_switch"
             android:textColor="@color/text_primary"
             android:textSize="16sp" />
+        <Button
+            android:id="@+id/show_ranking"
+            style="@style/Widget.AircraftWar.SecondaryButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_12"
+            android:text="@string/rank_title" />
     </LinearLayout>
 </ScrollView>
