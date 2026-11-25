@@ -2,4 +2,6 @@
 <resources>
     <color name="window_background">#101923</color>
     <color name="accent">#77DEC9</color>
+    <color name="game_text">#F2FBFF</color>
+    <color name="game_panel">#D9101923</color>
 </resources>

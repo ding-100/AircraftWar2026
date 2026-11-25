@@ -1,19 +1,22 @@
 package edu.hitsz.aircraftwar;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.os.SystemClock;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-final class BaseGame extends SurfaceView implements SurfaceHolder.Callback, Runnable {
-    private static final long FRAME_MILLIS = 40;
+import edu.hitsz.aircraftwar.game.Difficulty;
+import edu.hitsz.aircraftwar.game.GameSession;
 
-    private final Bitmap background;
-    private final Bitmap hero;
-    private final Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
+import static edu.hitsz.aircraftwar.game.AbstractFlyingObject.FIELD_HEIGHT;
+import static edu.hitsz.aircraftwar.game.AbstractFlyingObject.FIELD_WIDTH;
+import static edu.hitsz.aircraftwar.game.AbstractFlyingObject.STEP_MILLIS;
+
+final class BaseGame extends SurfaceView implements SurfaceHolder.Callback, Runnable {
+    private final GameSession session;
+    private final GameRenderer renderer;
     private final int borderColor;
 
     private volatile Viewport viewport = new Viewport(1f, 0f, 0f);
@@ -21,12 +24,13 @@ final class BaseGame extends SurfaceView implements SurfaceHolder.Callback, Runn
     private boolean isSurfaceReady;
     private boolean isScreenActive;
     private Thread gameThread;
-    private int backgroundOffset;
+    private volatile TouchPosition target;
 
-    BaseGame(Context context) {
+    BaseGame(Context context, Difficulty difficulty) {
         super(context);
-        background = GameImages.decode(getResources(), R.drawable.background_easy);
-        hero = GameImages.decode(getResources(), R.drawable.hero);
+        session = new GameSession(difficulty);
+        renderer = new GameRenderer(context, difficulty);
+        setContentDescription(context.getString(R.string.game_controls));
         borderColor = getResources().getColor(R.color.window_background, context.getTheme());
         getHolder().addCallback(this);
     }
@@ -49,10 +53,10 @@ final class BaseGame extends SurfaceView implements SurfaceHolder.Callback, Runn
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         float scale = Math.min(
-                (float) width / GameImages.FIELD_WIDTH, (float) height / GameImages.FIELD_HEIGHT);
+                (float) width / FIELD_WIDTH, (float) height / FIELD_HEIGHT);
         viewport = new Viewport(scale,
-                (width - GameImages.FIELD_WIDTH * scale) / 2f,
-                (height - GameImages.FIELD_HEIGHT * scale) / 2f);
+                (width - FIELD_WIDTH * scale) / 2f,
+                (height - FIELD_HEIGHT * scale) / 2f);
     }
 
     @Override
@@ -94,9 +98,16 @@ final class BaseGame extends SurfaceView implements SurfaceHolder.Callback, Runn
     public void run() {
         while (isRunning) {
             long startedAt = SystemClock.uptimeMillis();
+            TouchPosition currentTarget = target;
+            if (currentTarget != null && !session.isGameOver()) {
+                session.moveHero(currentTarget.x(), currentTarget.y());
+            }
+            session.update();
             drawFrame();
-            backgroundOffset = (backgroundOffset + 1) % GameImages.FIELD_HEIGHT;
-            long delay = FRAME_MILLIS - (SystemClock.uptimeMillis() - startedAt);
+            if (session.isGameOver()) {
+                return;
+            }
+            long delay = STEP_MILLIS - (SystemClock.uptimeMillis() - startedAt);
             if (delay > 0) {
                 try {
                     Thread.sleep(delay);
@@ -118,14 +129,38 @@ final class BaseGame extends SurfaceView implements SurfaceHolder.Callback, Runn
             canvas.drawColor(borderColor);
             canvas.translate(current.left(), current.top());
             canvas.scale(current.scale(), current.scale());
-            canvas.clipRect(0, 0, GameImages.FIELD_WIDTH, GameImages.FIELD_HEIGHT);
-            canvas.drawBitmap(background, 0, backgroundOffset, paint);
-            canvas.drawBitmap(background, 0, backgroundOffset - GameImages.FIELD_HEIGHT, paint);
-            canvas.drawBitmap(hero, (GameImages.FIELD_WIDTH - hero.getWidth()) / 2f,
-                    GameImages.FIELD_HEIGHT - 1.5f * hero.getHeight(), paint);
+            canvas.clipRect(0, 0, FIELD_WIDTH, FIELD_HEIGHT);
+            renderer.draw(canvas, session);
         } finally {
             holder.unlockCanvasAndPost(canvas);
         }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int action = event.getActionMasked();
+        if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE
+                || action == MotionEvent.ACTION_UP) {
+            Viewport current = viewport;
+            if (current.scale() > 0) {
+                target = new TouchPosition(
+                        Math.round((event.getX() - current.left()) / current.scale()),
+                        Math.round((event.getY() - current.top()) / current.scale()));
+            }
+        }
+        if (action == MotionEvent.ACTION_UP) {
+            performClick();
+        }
+        return true;
+    }
+
+    @Override
+    public boolean performClick() {
+        super.performClick();
+        return true;
+    }
+
+    private record TouchPosition(int x, int y) {
     }
 
     private record Viewport(float scale, float left, float top) {
