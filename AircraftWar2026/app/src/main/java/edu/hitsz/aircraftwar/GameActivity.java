@@ -118,7 +118,7 @@ public final class GameActivity extends Activity {
     }
 
     private boolean handleGameMessage(Message message) {
-        if (message.what != BaseGame.FRAME_EVENTS || isFinishing()) {
+        if (message.what != BaseGame.FRAME_EVENTS || isFinishing() || isDestroyed()) {
             return false;
         }
         BaseGame.FrameEvents frame = (BaseGame.FrameEvents) message.obj;
