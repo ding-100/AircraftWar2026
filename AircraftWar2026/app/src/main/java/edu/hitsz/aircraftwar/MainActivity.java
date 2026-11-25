@@ -2,18 +2,26 @@ package edu.hitsz.aircraftwar;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.widget.ImageView;
 
 public final class MainActivity extends Activity {
+    private BaseGame game;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        game = new BaseGame(this);
+        setContentView(game);
+    }
 
-        ImageView background = findViewById(R.id.preview_background);
-        background.setImageBitmap(GameImages.decode(getResources(), R.drawable.background_easy));
+    @Override
+    protected void onResume() {
+        super.onResume();
+        game.setScreenActive(true);
+    }
 
-        ImageView hero = findViewById(R.id.preview_hero);
-        hero.setImageBitmap(GameImages.decode(getResources(), R.drawable.hero));
+    @Override
+    protected void onPause() {
+        game.setScreenActive(false);
+        super.onPause();
     }
 }
