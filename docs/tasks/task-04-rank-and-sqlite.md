@@ -7,9 +7,9 @@
 ## 关键概念
 
 - `ListView` 负责滚动和复用屏幕上的行。`BaseAdapter` 负责把一条成绩交给相应的行控件。`getView()` 拿到可复用的 `convertView` 时，会重新填写姓名、分数、排名和删除事件。
-- DAO 是数据访问接口。桌面版 `DaoImpl` 会在运行目录读写各难度的文本文件，Android 版延续这种分工，通过 `RankDao` 调用 SQLite 实现。
+- DAO 是数据访问接口。桌面版 `DaoImpl` 会在运行目录读写各难度的文本文件，Android 版延续这种分工。Java 接口 `RankDao` 规定查询、保存和删除的方法，`SQLiteRankDao` 提供具体做法。以后更换存储方式时，榜单页面仍可调用这些方法。
 - SQLite 是 Android 自带的本地数据库。应用通过 `SQLiteOpenHelper` 创建和打开数据库。成绩保存在应用私有的 `databases/rank.db`，应用重启后仍可读取。
-- `Cursor` 是查询结果的游标。每次调用 `moveToNext()` 读一行，离开 `try` 代码块时 Java 自动关闭游标。
+- `Cursor` 是查询结果的游标。每次调用 `moveToNext()` 读一行。这里使用 `try (Cursor cursor = ...)`，即使读取时出现异常，Java 也会自动调用 `close()`。
 
 ## 实现流程
 
@@ -21,8 +21,8 @@
 ## 关键代码
 
 - `SQLiteRankDao.onCreate()` 定义成绩表和排序索引。难度、局编号、玩家姓名、分数和时间都有独立的列，SQLite 可以直接筛选和排序。第一名与行号由最新的查询顺序决定。
-- 局编号在开局时生成，数据库用 `UNIQUE` 约束检查它。若页面恢复后又提交同一局，SQLite 保留已有记录。列表中的删除按钮绑定数据库行 ID，同名同分的两条成绩可以分别处理。
-- `RankAdapter` 用行视图的 `tag` 保存控件引用，复用时省去重复查找控件。它会同时重设颜色和背景，第一名的高亮不会跟着复用行滚到别的位置。
+- 局编号在开局时生成，数据库用 `UNIQUE` 约束检查它。若页面恢复后又提交同一局，SQLite 保留已有记录。列表中的删除按钮绑定数据库行 ID。例如两个都叫 Pilot 的玩家各有一条 70 分记录，删除时传入被点中的行 ID，就能保留另一条。[`SQLiteRankDao.java`](../../AircraftWar2026/app/src/main/java/edu/hitsz/aircraftwar/rank/SQLiteRankDao.java)
+- `RankAdapter` 用行视图的 `tag` 保存控件引用，复用时省去重复查找控件。它会同时重设颜色和背景，第一名的高亮不会跟着复用行滚到别的位置。[`RankAdapter.java`](../../AircraftWar2026/app/src/main/java/edu/hitsz/aircraftwar/rank/RankAdapter.java)
 - `RankActivity` 使用后台队列处理 SQLite，再通过主线程 `Handler` 更新控件。快速切换难度时，旧查询即使先完成，也不会覆盖当前榜单。
 
 ## 运行与验证
@@ -32,6 +32,8 @@
 3. 完成一局游戏后点击「记录成绩」，输入名字后保存。对应难度会显示本局分数。取消录入可以继续浏览榜单。
 4. 使用 `./gradlew :app:testDebugUnitTest :app:lintDebug :app:assembleDebug` 验证构建。连接模拟器或设备后执行 `./gradlew :app:connectedDebugAndroidTest`，运行 SQLite 的难度过滤、同分排序、重开持久化、重试和精确删除测试。
 5. 在 Android Studio 的 Device Explorer 中查看 `edu.hitsz.aircraftwar/databases/rank.db`。数据库实际创建后才能看到该文件。
+
+AndroidX Test Runner 与 JUnit 扩展只用于在设备上运行数据库测试。它们属于 `androidTestImplementation`，不会随应用打包。运行时的 SQLite 来自 Android 系统。
 
 ## 小结
 
